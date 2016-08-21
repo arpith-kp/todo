@@ -2,6 +2,8 @@ package com.todoapp.aprakash.todoapp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,18 +32,20 @@ import java.util.Locale;
 public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerAdapterSwipe.SimpleViewHolder> {
 
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
-        public TextView todoText;
+        public EditText todoText;
         public Button todoDelete;
-        public TextView todoDate;
+        public EditText todoDate;
+        public MyCustomEditTextListener myCustomEditTextListener;
         SwipeLayout swipeLayout;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-        public SimpleViewHolder(View itemView) {
+        public SimpleViewHolder(View itemView, MyCustomEditTextListener customEditTextListener) {
             super(itemView);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
-            todoText = (TextView) itemView.findViewById(R.id.row_text);
+            todoText = (EditText) itemView.findViewById(R.id.row_text);
             todoDelete = (Button) itemView.findViewById(R.id.row_delete);
-            todoDate = (TextView) itemView.findViewById(R.id.row_date);
+            todoDate = (EditText) itemView.findViewById(R.id.row_date);
+            myCustomEditTextListener = customEditTextListener;
+            todoText.addTextChangedListener(myCustomEditTextListener);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -72,7 +76,7 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_row_swipe, parent, false);
-        return new SimpleViewHolder(view);
+        return new SimpleViewHolder(view, new MyCustomEditTextListener());
     }
 
     @Override
@@ -88,15 +92,6 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
         viewHolder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
             @Override
             public void onDoubleClick(SwipeLayout layout, boolean surface) {
-                DateFormat df = new SimpleDateFormat("MM/dd/yy", Locale.US);
-                Date parsedDate = null;
-                String x = item.getDate();
-                try {
-                    parsedDate = df.parse(x);
-                }catch (ParseException p){
-                    System.out.println(p);
-                }
-                actionsCreator.edit(item.getId(), item.getText(), x);
                 Toast.makeText(mContext, "Item Updated Successfully", Toast.LENGTH_SHORT).show();
             }
         });
@@ -111,20 +106,32 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
             }
         });
 
-        viewHolder.todoText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
-            @Override
-            public void onFocusChange(View v, boolean hasFocus){
-                if (!hasFocus) {
+        viewHolder.todoText.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String newText = ((EditText) view).getText()
+                                .toString();
+                        item.setText(newText);
 
-                    String newText = ((EditText) v).getText()
-                            .toString();
-                    item.setText(newText);
-                }
-        }
-        }
-        );
-        viewHolder.todoText.setText(item.getText());
-        viewHolder.todoDate.setText(item.getDate().toString());
+                    }
+
+                });
+//        viewHolder.todoText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus){
+//                if (!hasFocus) {
+//
+//                    String newText = ((EditText) v).getText()
+//                            .toString();
+//                    item.setText(newText);
+//                }
+//        }
+//        }
+//        );
+        viewHolder.myCustomEditTextListener.updatePosition(viewHolder.getAdapterPosition());
+//        viewHolder.todoText.setText(item.getText());
+//        viewHolder.todoDate.setText(item.getDate().toString());
 
         mItemManger.bindView(viewHolder.itemView, position);
     }
@@ -137,5 +144,32 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
     @Override
     public int getSwipeLayoutResourceId(int position) {
         return R.id.swipe;
+    }
+
+
+    private class MyCustomEditTextListener implements TextWatcher {
+        private int position;
+
+        public void updatePosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
+            // no op
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+            // no op
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            Todo item = todos.get(position);
+
+            actionsCreator.editText(item.getId(), editable.toString());
+        }
     }
 }

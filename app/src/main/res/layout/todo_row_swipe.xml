@@ -61,14 +61,14 @@
 
             android:padding="10dp"
             android:layout_height="match_parent">
-        <TextView
+        <EditText
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:text="New Text"
             android:id="@+id/row_text"
              />
 
-        <TextView
+        <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"

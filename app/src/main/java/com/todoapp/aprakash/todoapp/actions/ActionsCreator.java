@@ -36,19 +36,25 @@ public class ActionsCreator {
 
     }
 
-    public void edit(long id, String text, String date) {
+    public void editText(long id, String text) {
         dispatcher.dispatch(
-                TodoActions.TODO_CREATE,
+                TodoActions.TODO_EDIT,
                 TodoActions.KEY_ID, id,
                 TodoActions.KEY_TEXT,
-                text,
-                TodoActions.KEY_DATE,
-                date
+                text
 
         );
 
     }
 
+    public void editDate(long id, String date){
+        dispatcher.dispatch(
+                TodoActions.TODO_EDIT,
+                TodoActions.KEY_ID, id,
+                TodoActions.KEY_DATE,
+                date
+        );
+    }
     public void destroy(long id) {
         dispatcher.dispatch(
                 TodoActions.TODO_DESTROY,
