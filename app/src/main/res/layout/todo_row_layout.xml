@@ -1,0 +1,50 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:id="@+id/subRelative1">
+
+    <CheckBox
+        android:id="@+id/row_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/row_delete" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:text="Delete"
+        android:layout_height="wrap_content"
+        android:id="@+id/row_delete"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+
+    <TextView
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/row_text"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/row_checkbox"
+        android:layout_alignBottom="@+id/row_checkbox" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:id="@+id/row_date"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/row_delete"
+        android:layout_alignBottom="@+id/row_delete" />
+
+</RelativeLayout>
+
+
+
