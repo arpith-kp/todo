@@ -4,6 +4,7 @@ package com.todoapp.aprakash.todoapp.stores;
  * Created by aprakash on 8/7/16.
  */
 
+import com.todoapp.aprakash.todoapp.MainActivity;
 import com.todoapp.aprakash.todoapp.actions.Action;
 import com.todoapp.aprakash.todoapp.actions.TodoActions;
 import com.todoapp.aprakash.todoapp.dispatcher.Dispatcher;
@@ -23,16 +24,18 @@ public class TodoStore extends Store {
     private static TodoStore instance;
     private final List<Todo> todos;
     private Todo lastDeleted;
+    private TodoStoreDBHelper dbHelper;
 
 
-    protected TodoStore(Dispatcher dispatcher) {
-        super(dispatcher);
+    protected TodoStore(Dispatcher dispatcher, TodoStoreDBHelper dbHelper) {
+        super(dispatcher, dbHelper);
         todos = new ArrayList<>();
-    }
 
-    public static TodoStore get(Dispatcher dispatcher) {
+
+    }
+    public static TodoStore get(Dispatcher dispatcher, TodoStoreDBHelper dbHelper) {
         if (instance == null) {
-            instance = new TodoStore(dispatcher);
+            instance = new TodoStore(dispatcher, dbHelper);
         }
         return instance;
     }
@@ -155,7 +158,10 @@ public class TodoStore extends Store {
     private void create(String text,String date) {
         long id = System.currentTimeMillis();
         Todo todo = new Todo(id, text, date);
+        dbHelper = TodoStoreDBHelper.getInstance(MainActivity.getmContext());
+        TodoStore todoStore =  TodoStore.get(dispatcher, dbHelper);
         addElement(todo);
+//        todoStore.dbHelper.addTodoToDb(todo);
         Collections.sort(todos);
     }
 

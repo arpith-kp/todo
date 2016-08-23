@@ -26,6 +26,7 @@ public class Todo implements Cloneable, Comparable<Todo> {
         this.date = date;
     }
 
+    public Todo(){}
 
     @Override
     public String toString(){

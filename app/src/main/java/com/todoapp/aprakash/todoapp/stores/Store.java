@@ -9,9 +9,11 @@ import com.todoapp.aprakash.todoapp.dispatcher.Dispatcher;
 public abstract class Store {
 
     final Dispatcher dispatcher;
+    final TodoStoreDBHelper dbHelper;
 
-    protected Store(Dispatcher dispatcher) {
+    protected Store(Dispatcher dispatcher, TodoStoreDBHelper dbHelper) {
         this.dispatcher = dispatcher;
+        this.dbHelper = dbHelper;
     }
 
     void emitStoreChange() {

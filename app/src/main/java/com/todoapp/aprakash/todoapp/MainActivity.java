@@ -1,5 +1,6 @@
 package com.todoapp.aprakash.todoapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,7 @@ import butterknife.OnClick;
 import com.todoapp.aprakash.todoapp.actions.ActionsCreator;
 import com.todoapp.aprakash.todoapp.dispatcher.Dispatcher;
 import com.todoapp.aprakash.todoapp.stores.TodoStore;
+import com.todoapp.aprakash.todoapp.stores.TodoStoreDBHelper;
 import com.todoapp.aprakash.todoapp.utils.DividerItemDecoration;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -49,9 +51,13 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
     private CheckBox mainCheck;
     public static final String DATE_PICKER = "DATE_PICKER";
     private Calendar dateChosen = Calendar.getInstance();
+    private static Context mContext;
 
+    private TodoStoreDBHelper dbHelper;
 
-
+    public static Context getmContext(){
+        return mContext;
+    }
 
     RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -93,6 +99,7 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
         ButterKnife.bind(this); // --- set date here
         initDependencies();
         setupView();
+
     }
     // ---
     @Override
@@ -109,7 +116,9 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
     private void initDependencies() {
         dispatcher = Dispatcher.get(new Bus());
         actionsCreator = ActionsCreator.get(dispatcher);
-        todoStore = TodoStore.get(dispatcher);
+        mContext = getApplicationContext();
+        dbHelper = TodoStoreDBHelper.getInstance(mContext);
+        todoStore = TodoStore.get(dispatcher, dbHelper);
     }
 
     private void setupView() {
@@ -152,12 +161,13 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
         mainList.setAdapter(listSwipeAdapter);
 
         mainList.setOnScrollListener(onScrollListener);
+
     }
 
     private void updateUI() {
-//        listAdapter.setItems(todoStore.getTodos());
-        listSwipeAdapter.setItems(todoStore.getTodos());
-
+            listSwipeAdapter.setItems(todoStore.getTodos());
+//        listSwipeAdapter.setItems(dbHelper.getAllTodoFromDb());
+//
         if (todoStore.canUndo()) {
             Snackbar snackbar = Snackbar.make(mainLayout, "Element deleted", Snackbar.LENGTH_LONG);
             snackbar.setAction("Undo", new View.OnClickListener() {
