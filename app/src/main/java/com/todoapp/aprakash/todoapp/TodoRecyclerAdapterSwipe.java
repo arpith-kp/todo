@@ -22,13 +22,8 @@ import com.todoapp.aprakash.todoapp.actions.ActionsCreator;
 import com.todoapp.aprakash.todoapp.model.Todo;
 
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerAdapterSwipe.SimpleViewHolder> {
 
@@ -56,12 +51,12 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
             todoEditSave = (Button) itemView.findViewById(R.id.row_save_editt);
             myCustomEditTextListener = customEditTextListener;
 //
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(view.getContext(), "onItemSelected: " + todoText.getText().toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Toast.makeText(view.getContext(), "onItemSelected: " + todoText.getText().toString(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
     }
 
@@ -73,8 +68,8 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
 
     public TodoRecyclerAdapterSwipe(Context context, ActionsCreator actionsCreator) {
         this.todos = new ArrayList<>();
-        TodoRecyclerAdapterSwipe.actionsCreator = actionsCreator;
         this.mContext = context;
+        this.actionsCreator = actionsCreator;
     }
 
     public void setItems(List<Todo> todos) {
@@ -119,9 +114,16 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
                     @Override
                     public void onClick(View view) {
                         String newText = viewHolder.todoEditText.getText().toString();
-                        actionsCreator.editText(item.getId(),newText);
-                        viewHolder.todoText.setText(item.getText());
-                        viewHolder.todoDate.setText(item.getDate().toString());
+                        String newdate = viewHolder.todoEditDate.getText().toString();
+                        int delPosition = viewHolder.getAdapterPosition();
+                        final Todo item = todos.get(delPosition);
+                        actionsCreator.editText(item.getId(),newText, newdate);
+                        if (item.getText() !=null){
+                            viewHolder.todoText.setText(item.getText());
+                        }
+                        if (item.getDate() !=null) {
+                            viewHolder.todoDate.setText(item.getDate().toString());
+                        }
                         viewHolder.todoDate.setVisibility(view.VISIBLE);
                         viewHolder.todoText.setVisibility(view.VISIBLE);
                         viewHolder.editbar.setVisibility(view.GONE);
@@ -147,10 +149,13 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
             @Override
             public void onClick(View view) {
                 mItemManger.removeShownLayouts(viewHolder.swipeLayout);
-                actionsCreator.destroy(item.getId());
+                int delPosition = viewHolder.getAdapterPosition();
+                final Todo item = todos.get(delPosition);
+                actionsCreator.destroy(item.getText());
                 mItemManger.closeAllItems();
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, todos.size());
+                notifyDataSetChanged();
             }
         });
 
@@ -204,9 +209,7 @@ public class TodoRecyclerAdapterSwipe extends RecyclerSwipeAdapter<TodoRecyclerA
 
         @Override
         public void afterTextChanged(Editable editable) {
-            Todo item = todos.get(position);
-
-            actionsCreator.editText(item.getId(), editable.toString());
+            // no op
         }
     }
 }

@@ -36,12 +36,14 @@ public class ActionsCreator {
 
     }
 
-    public void editText(long id, String text) {
+    public void editText(long id, String text,String date) {
         dispatcher.dispatch(
                 TodoActions.TODO_EDIT,
                 TodoActions.KEY_ID, id,
                 TodoActions.KEY_TEXT,
-                text
+                text,
+                TodoActions.KEY_DATE,
+                date
 
         );
 
@@ -55,10 +57,17 @@ public class ActionsCreator {
                 date
         );
     }
-    public void destroy(long id) {
+//    public void destroy(long id) {
+//        dispatcher.dispatch(
+//                TodoActions.TODO_DESTROY,
+//                TodoActions.KEY_ID, id
+//        );
+//    }
+
+    public void destroy(String textName) {
         dispatcher.dispatch(
                 TodoActions.TODO_DESTROY,
-                TodoActions.KEY_ID, id
+                TodoActions.KEY_TEXT, textName
         );
     }
 

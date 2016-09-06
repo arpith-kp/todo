@@ -90,7 +90,8 @@ public class TodoRecyclerAdapter extends RecyclerView.Adapter<TodoRecyclerAdapte
             todoDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    actionsCreator.destroy(todo.getId());
+                    actionsCreator.destroy(todo.getText());
+//                    actionsCreator.destroy(todo.getId());
                 }
             });
         }

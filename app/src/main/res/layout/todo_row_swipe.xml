@@ -8,27 +8,29 @@
 
 <!--android:layout_toRightOf="@+id/row_text"-->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:id="@+id/subRelative1">
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="horizontal"-->
+    <!--android:id="@+id/subRelative1">-->
 
-    <com.daimajia.swipe.SwipeLayout xmlns:swipe="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/swipe"
+    <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        swipe:leftEdgeSwipeOffset="0dp"
-        swipe:rightEdgeSwipeOffset="0dp">
+        android:id="@+id/swipe">
+        <!--swipe:leftEdgeSwipeOffset="0dp"-->
+        <!--swipe:rightEdgeSwipeOffset="0dp">-->
 
         <LinearLayout
+            android:id="@+id/RowView"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:background="#FF5534"
             android:gravity="center"
             android:tag="Bottom3"
-            android:weightSum="10">
+            android:weightSum="10"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/trash"
@@ -61,19 +63,44 @@
 
             android:padding="10dp"
             android:layout_height="match_parent">
-        <EditText
+        <TextView
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:text="New Text"
             android:id="@+id/row_text"
              />
 
-        <EditText
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
             android:id="@+id/row_date"
             />
+
+        <LinearLayout android:layout_width="wrap_content" android:orientation="vertical"
+            android:layout_height="wrap_content" android:id="@+id/EditView">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/row_text_edit"
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:id="@+id/row_date_edit"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:text="Save"
+                android:layout_height="wrap_content"
+                android:id="@+id/row_save_editt"
+                android:layout_weight="4"
+                android:background="#ffffff" />
+            </LinearLayout>
  </LinearLayout>
 
 
@@ -83,9 +110,7 @@
 
 
 
-
-
-</RelativeLayout>
+<!--</RelativeLayout>-->
 
 
 

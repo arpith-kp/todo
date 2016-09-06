@@ -1,5 +1,9 @@
 package com.todoapp.aprakash.todoapp.model;
 
+import android.database.Cursor;
+
+import com.todoapp.aprakash.todoapp.stores.TodoStoreDBHelper;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -49,6 +53,14 @@ public class Todo implements Cloneable, Comparable<Todo> {
 
     public long getId() {
         return id;
+    }
+
+    public static Todo fromCursor(Cursor cursor){
+        long id = cursor.getInt(cursor.getColumnIndex(TodoStoreDBHelper.KEY_TODO_ID));
+        String text = cursor.getString(cursor.getColumnIndex(TodoStoreDBHelper.KEY_TODO_TEXT));
+        String date = cursor.getString(cursor.getColumnIndex(TodoStoreDBHelper.KEY_TODO_DATE));
+        Todo todo = new Todo(id, text, date);
+        return todo;
     }
 
     public boolean isComplete() {

@@ -24,12 +24,12 @@ public class TodoStore extends Store {
     private static TodoStore instance;
     private final List<Todo> todos;
     private Todo lastDeleted;
-    private TodoStoreDBHelper dbHelper;
 
 
     protected TodoStore(Dispatcher dispatcher, TodoStoreDBHelper dbHelper) {
         super(dispatcher, dbHelper);
         todos = new ArrayList<>();
+
 
 
     }
@@ -64,8 +64,8 @@ public class TodoStore extends Store {
                 break;
 
             case TodoActions.TODO_DESTROY:
-                id = ((long) action.getData().get(TodoActions.KEY_ID));
-                destroy(id);
+                String textName = ((String) action.getData().get(TodoActions.KEY_TEXT));
+                destroy(textName);
                 emitStoreChange();
                 break;
 
@@ -109,13 +109,7 @@ public class TodoStore extends Store {
     }
 
     private void destroyCompleted() {
-        Iterator<Todo> iter = todos.iterator();
-        while (iter.hasNext()) {
-            Todo todo = iter.next();
-            if (todo.isComplete()) {
-                iter.remove();
-            }
-        }
+        dbHelper.deleteAllTodosFromDb();
     }
 
     private void updateCompleteAll() {
@@ -158,18 +152,34 @@ public class TodoStore extends Store {
     private void create(String text,String date) {
         long id = System.currentTimeMillis();
         Todo todo = new Todo(id, text, date);
-        dbHelper = TodoStoreDBHelper.getInstance(MainActivity.getmContext());
-        TodoStore todoStore =  TodoStore.get(dispatcher, dbHelper);
         addElement(todo);
-//        todoStore.dbHelper.addTodoToDb(todo);
         Collections.sort(todos);
+
     }
 
-    private void destroy(long id) {
+//    private void destroy(long id) {
+//        todos.addAll(dbHelper.getAllTodoFromDb());
+//        Iterator<Todo> iter = todos.iterator();
+//        while (iter.hasNext()) {
+//            Todo todo = iter.next();
+//            if (todo.getId() == id) {
+//                dbHelper.deleteTodoFromDb(todo);
+////                dbHelper.deleteAllTodosFromDb();
+//                lastDeleted = todo.clone();
+//                iter.remove();
+//                break;
+//            }
+//        }
+//    }
+
+    private void destroy(String textName) {
+        todos.addAll(dbHelper.getAllTodoFromDb());
         Iterator<Todo> iter = todos.iterator();
         while (iter.hasNext()) {
             Todo todo = iter.next();
-            if (todo.getId() == id) {
+            if (todo.getText().equals(textName)) {
+                dbHelper.deleteTodoFromDb(todo);
+//                dbHelper.deleteAllTodosFromDb();
                 lastDeleted = todo.clone();
                 iter.remove();
                 break;
@@ -182,9 +192,11 @@ public class TodoStore extends Store {
         if (todo != null) {
             if (todo.getId() == id){
                 todos.remove(todo);
+                dbHelper.deleteTodoFromDb(todo);
                 long updatedId = System.currentTimeMillis();
                 Todo updatedTodo = new Todo(updatedId, updatedText, updatedDate);
-                addElement(updatedTodo);
+                todos.add(updatedTodo);
+                dbHelper.addTodoToDb(updatedTodo);
                 Collections.sort(todos);
             }
 
@@ -192,6 +204,7 @@ public class TodoStore extends Store {
     }
 
     private Todo getById(long id) {
+        todos.addAll(dbHelper.getAllTodoFromDb());
         Iterator<Todo> iter = todos.iterator();
         while (iter.hasNext()) {
             Todo todo = iter.next();
@@ -204,6 +217,9 @@ public class TodoStore extends Store {
 
 
     private void addElement(Todo clone) {
+        TodoStore todoStore =  TodoStore.get(dispatcher, dbHelper);
+
+        dbHelper.addTodoToDb(clone);
         todos.add(clone);
         Collections.sort(todos);
     }

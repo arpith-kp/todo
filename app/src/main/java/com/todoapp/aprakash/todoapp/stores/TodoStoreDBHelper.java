@@ -3,8 +3,10 @@ package com.todoapp.aprakash.todoapp.stores;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 
 import com.todoapp.aprakash.todoapp.MainActivity;
 import com.todoapp.aprakash.todoapp.model.Todo;
@@ -14,15 +16,17 @@ import java.util.List;
 
 public class TodoStoreDBHelper extends SQLiteOpenHelper {
     // Database Info
-    private static final String DATABASE_NAME = "todosDatabase";
-    private static final int DATABASE_VERSION = 1;
 
-    private static final String TABLE_TODOS = "todos";
-    private static final String KEY_TODO_ID = "id";
-    private static final String KEY_TODO_TEXT = "text";
-    private static final String KEY_TODO_DATE = "date";
 
-    private static TodoStoreDBHelper sInstance;
+    public static final String DATABASE_NAME = "todosDatabase";
+    public static final int DATABASE_VERSION = 1;
+
+    public static final String TABLE_TODOS = "todos";
+    public static final String KEY_TODO_ID = "_id";
+    public static final String KEY_TODO_TEXT = "text";
+    public static final String KEY_TODO_DATE = "date";
+
+    public static TodoStoreDBHelper sInstance;
 
     public static synchronized TodoStoreDBHelper getInstance(Context context) {
 
@@ -81,6 +85,51 @@ public class TodoStoreDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void updateTodoToDb(Todo item){
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues updateTodo = new ContentValues();
+            updateTodo.put(KEY_TODO_DATE, item.getDate());
+            updateTodo.put(KEY_TODO_TEXT, item.getText());
+            db.update(TABLE_TODOS, updateTodo, KEY_TODO_ID + "=" + KEY_TODO_ID, null);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            System.out.println(e);
+            //do nothing
+        }finally {
+            db.endTransaction();
+        }
+
+    }
+
+    public Cursor getCursorForTodo() throws SQLException{
+        String TODOS_SELECT_QUERY =
+                String.format("SELECT _id, text, date FROM %s ",
+                        TABLE_TODOS + ";"
+                );
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(TODOS_SELECT_QUERY, null);
+        try {
+            if (cursor!=null) {
+                cursor.moveToFirst();
+            }
+        } catch (Exception e) {
+            //do nothing
+            System.out.print(e);
+        }
+        try {
+        return cursor;
+
+        }catch (Exception e)
+        {
+            System.out.print(e);
+        }
+        return null;
+    }
+
+
+
     public List<Todo> getAllTodoFromDb() {
         List<Todo> todos = new ArrayList<>();
 
@@ -114,6 +163,25 @@ public class TodoStoreDBHelper extends SQLiteOpenHelper {
         return todos;
 
 
+    }
+
+    public void deleteTodoFromDb(Todo item){
+        Long itemId = item.getId();
+        SQLiteDatabase db = getWritableDatabase();
+//        String ids = String.valueOf(itemId) ;
+        String ids = String.valueOf(item.getText()) ;
+        db.beginTransaction();
+        try {
+            String[] whereArgs = {ids};
+            db.delete(TABLE_TODOS, KEY_TODO_TEXT + "=?", whereArgs);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            System.out.print(e);
+
+        } finally {
+            db.endTransaction();
+        }
+//        db.close();
     }
 
 

@@ -1,6 +1,7 @@
 package com.todoapp.aprakash.todoapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.ImageButton;
 
@@ -46,8 +49,8 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
     private Dispatcher dispatcher;
     private ActionsCreator actionsCreator;
     private TodoStore todoStore;
-//    private TodoRecyclerAdapter listAdapter;
     private TodoRecyclerAdapterSwipe listSwipeAdapter;
+//    private TodoCursorRecyclerAdapterSwipeCopy listSwipeAdapter;
     private CheckBox mainCheck;
     public static final String DATE_PICKER = "DATE_PICKER";
     private Calendar dateChosen = Calendar.getInstance();
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
     public void clickSetDate() {
         todaysDatePickerDialog.show(getFragmentManager(), DATE_PICKER);
     }
-// ---
+    // ---
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,41 +136,39 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
                 resetMainInput();
             }
         });
-        mainCheck = (CheckBox) findViewById(R.id.main_checkbox);
-        mainCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkAll();
-            }
-        });
+//        mainCheck = (CheckBox) findViewById(R.id.main_checkbox);
+//        mainCheck.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                checkAll();
+//            }
+//        });
         Button mainClearCompleted = (Button) findViewById(R.id.main_clear_completed);
         mainClearCompleted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 clearCompleted();
-                resetMainCheck();
             }
         });
 
 
         RecyclerView mainList = (RecyclerView) findViewById(R.id.main_list);
-
         mainList.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider)));
         mainList.setLayoutManager(new LinearLayoutManager(this));
         mainList.setItemAnimator(new FadeInLeftAnimator());
-//        listAdapter = new TodoRecyclerAdapter(actionsCreator);
+
         listSwipeAdapter = new TodoRecyclerAdapterSwipe(this, actionsCreator);
         ((TodoRecyclerAdapterSwipe) listSwipeAdapter).setMode(Attributes.Mode.Single);
         mainList.setAdapter(listSwipeAdapter);
 
         mainList.setOnScrollListener(onScrollListener);
+        updateUI();
 
     }
 
     private void updateUI() {
-            listSwipeAdapter.setItems(todoStore.getTodos());
-//        listSwipeAdapter.setItems(dbHelper.getAllTodoFromDb());
-//
+
+        listSwipeAdapter.setItems(dbHelper.getAllTodoFromDb());
         if (todoStore.canUndo()) {
             Snackbar snackbar = Snackbar.make(mainLayout, "Element deleted", Snackbar.LENGTH_LONG);
             snackbar.setAction("Undo", new View.OnClickListener() {
@@ -198,6 +199,9 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
 
         if (validateInput()) {
             actionsCreator.create(getInputText(), getInputDate());
+
+//            Intent addItem = new Intent(this, AddMember.class);
+//            startActivity(addItem);
 //            actionsCreator.create(getInputText(), dateChosen);
         }
     }
@@ -212,13 +216,8 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
 
     private void resetMainInput() {
         mainInput.setText("");
+        mainDate.setText("Add Date");
 
-    }
-
-    private void resetMainCheck() {
-        if (mainCheck.isChecked()) {
-            mainCheck.setChecked(false);
-        }
     }
 
     private boolean validateInput() {
@@ -251,4 +250,9 @@ public class MainActivity extends AppCompatActivity  implements DatePickerDialog
     public void onTodoStoreChange(TodoStore.TodoStoreChangeEvent event) {
         updateUI();
     }
+
 }
+
+
+
+

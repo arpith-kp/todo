@@ -10,10 +10,12 @@ public abstract class Store {
 
     final Dispatcher dispatcher;
     final TodoStoreDBHelper dbHelper;
+    final Store store;
 
-    protected Store(Dispatcher dispatcher, TodoStoreDBHelper dbHelper) {
+    public Store(Dispatcher dispatcher, TodoStoreDBHelper dbHelper) {
         this.dispatcher = dispatcher;
         this.dbHelper = dbHelper;
+        this.store = this;
     }
 
     void emitStoreChange() {
