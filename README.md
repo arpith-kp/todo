@@ -25,7 +25,7 @@ The following **optional** features are implemented:
 The following **additional** features are implemented:
 
 * [ ] [Swipe](https://github.com/daimajia/AndroidSwipeLayout) delete feature allows to easily remove items from list.
-* [ ] RecyclerView helps to reuse cell while scrolling upa nd down
+* [ ] RecyclerView helps to reuse cell while scrolling up and down
 
 ## Video Walkthrough 
 
@@ -37,11 +37,11 @@ GIF created with [Licecap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-* Persisting data into disk was challenging escpecially using SwipeAdapter
+* Persisting data into disk was challenging especially  using SwipeAdapter
 
 ## References
 * [Swipe Adapter](https://github.com/daimajia/AndroidSwipeLayout/wiki)
-* [Flux MVC Architechture](https://facebook.github.io/flux/docs/todo-list.html)
+* [Flux MVC Architecture](https://facebook.github.io/flux/docs/todo-list.html)
 
 ## License
 
